@@ -18,3 +18,20 @@ export interface Asset {
 export interface Portfolio {
   assets: Asset[]
 }
+
+// Single price data point (OHLCV)
+export interface PricePoint {
+  date: string           // ISO date, e.g. "2024-03-15"
+  open: number
+  high: number
+  low: number
+  close: number
+  volume: number
+}
+
+// Historical price data for an asset
+export interface PriceData {
+  ticker: string         // Yahoo Finance ticker symbol
+  currency: string       // e.g. "USD", "EUR"
+  prices: PricePoint[]
+}
