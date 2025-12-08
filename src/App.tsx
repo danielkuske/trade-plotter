@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import { FileUpload } from './components/FileUpload'
 import { AssetList } from './components/AssetList'
 import { AssetDetail } from './components/AssetDetail'
 import { parseTradePdf } from './lib/pdfParser'
 import { fetchAllPriceData } from './lib/stockApi'
 import type { Portfolio, PriceData } from './types'
+import { loadPdf } from './lib/pdfLoader'
 
 type AppState = 'upload' | 'parsing' | 'fetching' | 'complete' | 'ready' | 'error'
 
@@ -40,7 +42,8 @@ function App() {
     
     try {
       // Step 1: Parse the PDF
-      const result = await parseTradePdf(file)
+      const text = await loadPdf(file)
+      const result = await parseTradePdf(text)
       setPortfolio(result)
       
       if (result.assets.length === 0) {
@@ -213,21 +216,28 @@ function App() {
           </header>
 
           {/* Main Content */}
-          <div className="flex-1 flex overflow-hidden">
+          <PanelGroup direction="horizontal" className="flex-1">
             {/* Left Sidebar - Asset List */}
-            <AssetList
-              assets={portfolio.assets}
-              priceData={priceData}
-              selectedIsin={selectedIsin}
-              onSelectAsset={setSelectedIsin}
-            />
+            <Panel defaultSize={25} minSize={15} maxSize={50}>
+              <AssetList
+                assets={portfolio.assets}
+                priceData={priceData}
+                selectedIsin={selectedIsin}
+                onSelectAsset={setSelectedIsin}
+              />
+            </Panel>
+
+            {/* Resize Handle */}
+            <PanelResizeHandle className="w-1 bg-gray-200 hover:bg-blue-400 active:bg-blue-500 transition-colors cursor-col-resize" />
 
             {/* Right Panel - Asset Detail */}
-            <AssetDetail
-              asset={selectedAsset}
-              priceData={selectedPrices}
-            />
-          </div>
+            <Panel defaultSize={75} minSize={40}>
+              <AssetDetail
+                asset={selectedAsset}
+                priceData={selectedPrices}
+              />
+            </Panel>
+          </PanelGroup>
         </div>
       )}
     </div>

@@ -10,7 +10,7 @@ interface AssetListProps {
 
 export function AssetList({ assets, priceData, selectedIsin, onSelectAsset }: AssetListProps) {
   return (
-    <aside className="w-72 bg-white border-r border-gray-200 overflow-y-auto">
+    <aside className="h-full bg-white border-r border-gray-200 overflow-y-auto">
       <div className="p-4">
         <h2 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
           Assets ({assets.length})

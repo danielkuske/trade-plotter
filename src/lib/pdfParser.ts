@@ -1,19 +1,18 @@
 import type { Asset, Portfolio, Transaction } from '../types'
-import { loadPdf } from './pdfLoader'
+
 
 // German month abbreviations to month numbers
 const MONTH_MAP: Record<string, string> = {
   'Jan.': '01', 'Feb.': '02', 'Mär.': '03', 'März': '03',
-  'Apr.': '04', 'Mai': '05', 'Jun.': '06',
-  'Jul.': '07', 'Aug.': '08', 'Sep.': '09',
-  'Okt.': '10', 'Nov.': '11', 'Dez.': '12',
+  'Apr.': '04', 'Mai': '05', 'Jun.': '06', 'Juni': '06',
+  'Jul.': '07', 'Juli': '07', 'Aug.': '08', 'Sep.': '09',
+  'Sept.': '09', 'Okt.': '10', 'Nov.': '11', 'Dez.': '12',
 }
 
 /**
  * Main entry point: Parse a PDF file into a Portfolio
  */
-export async function parseTradePdf(file: File): Promise<Portfolio> {
-  const text = await loadPdf(file)
+export async function parseTradePdf(text: string): Promise<Portfolio> {
   return parseTradeText(text)
 }
 
@@ -139,7 +138,8 @@ function parseTradeText(text: string): Portfolio {
   
   // Split by dates to process entries
   // Date pattern: "26 Feb. 2024" or "05 März 2024"
-  const datePattern = /(\d{1,2}\s*(?:Jan\.|Feb\.|Mär\.|März|Apr\.|Mai|Jun\.|Jul\.|Aug\.|Sep\.|Okt\.|Nov\.|Dez\.)\s*\d{4})/g
+  const monthNames = Object.keys(MONTH_MAP).map(m => m.replace('.', '\\.')).join('|')
+  const datePattern = new RegExp(`(\\d{1,2}\\s*(?:${monthNames})\\s*\\d{4})`, 'g')
   
   const segments = text.split(datePattern)
   

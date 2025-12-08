@@ -5,9 +5,10 @@ import type { PriceData, Transaction } from '../types'
 interface PriceChartProps {
   priceData: PriceData
   transactions: Transaction[]
+  highlightedDate?: string | null
 }
 
-export function PriceChart({ priceData, transactions }: PriceChartProps) {
+export function PriceChart({ priceData, transactions, highlightedDate }: PriceChartProps) {
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
   const seriesRef = useRef<ISeriesApi<'Line'> | null>(null)
@@ -97,7 +98,7 @@ export function PriceChart({ priceData, transactions }: PriceChartProps) {
     }
   }, [])
 
-  // Update data when priceData or transactions change
+  // Update data when priceData changes
   useEffect(() => {
     if (!seriesRef.current || !priceData) return
 
@@ -109,6 +110,14 @@ export function PriceChart({ priceData, transactions }: PriceChartProps) {
 
     seriesRef.current.setData(lineData)
 
+    // Fit content to view
+    chartRef.current?.timeScale().fitContent()
+  }, [priceData])
+
+  // Update markers when transactions or highlightedDate changes
+  useEffect(() => {
+    if (!seriesRef.current || !priceData) return
+
     // Create markers for transactions (v5 API uses createSeriesMarkers)
     const markerData = transactions
       .filter(tx => {
@@ -116,27 +125,32 @@ export function PriceChart({ priceData, transactions }: PriceChartProps) {
         const txDate = tx.date
         return priceData.prices.some(p => p.date === txDate)
       })
-      .map(tx => ({
-        time: tx.date as Time,
-        position: tx.type === 'buy' ? 'belowBar' as const : 'aboveBar' as const,
-        color: tx.type === 'buy' ? '#22c55e' : '#ef4444',
-        shape: tx.type === 'buy' ? 'arrowUp' as const : 'arrowDown' as const,
-        text: tx.type === 'buy' ? 'B' : 'S',
-      }))
+      .map(tx => {
+        const isHighlighted = highlightedDate === tx.date
+        const baseColor = tx.type === 'buy' ? '#22c55e' : '#ef4444'
+        const highlightColor = tx.type === 'buy' ? '#15803d' : '#b91c1c'
+        
+        return {
+          time: tx.date as Time,
+          position: tx.type === 'buy' ? 'belowBar' as const : 'aboveBar' as const,
+          color: isHighlighted ? highlightColor : baseColor,
+          shape: tx.type === 'buy' ? 'arrowUp' as const : 'arrowDown' as const,
+          text: `€${tx.totalValue.toFixed(0)}`,
+          size: isHighlighted ? 2 : 1,
+        }
+      })
 
     // Remove existing markers plugin if any
     if (markersRef.current) {
       markersRef.current.detach()
+      markersRef.current = null
     }
 
     // Create new markers plugin (v5 API)
-    if (markerData.length > 0) {
+    if (markerData.length > 0 && seriesRef.current) {
       markersRef.current = createSeriesMarkers(seriesRef.current, markerData)
     }
-
-    // Fit content to view
-    chartRef.current?.timeScale().fitContent()
-  }, [priceData, transactions])
+  }, [priceData, transactions, highlightedDate])
 
   return (
     <div 
