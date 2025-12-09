@@ -3,6 +3,7 @@ import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import { FileUpload } from './components/FileUpload'
 import { AssetList } from './components/AssetList'
 import { AssetDetail } from './components/AssetDetail'
+import { Logo, LogoIcon } from './components/Logo'
 import { parseTradePdf } from './lib/pdfParser'
 import { fetchAllPriceData } from './lib/stockApi'
 import type { Portfolio, PriceData } from './types'
@@ -103,9 +104,7 @@ function App() {
           <div className="max-w-md w-full mx-auto px-6">
             {/* Header */}
             <header className="text-center mb-12">
-              <h1 className="text-3xl font-semibold text-gray-900 mb-2">
-                Trade Plotter
-              </h1>
+              <Logo size="lg" className="mb-4" />
               <p className="text-gray-500">
                 Visualize your trades on a price chart
               </p>
@@ -206,7 +205,10 @@ function App() {
         <div className="h-screen flex flex-col">
           {/* Header */}
           <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-            <h1 className="text-xl font-semibold text-gray-900">Trade Plotter</h1>
+            <div className="flex items-center gap-2">
+              <LogoIcon className="text-gray-900" />
+              <h1 className="text-xl font-semibold text-gray-900">Trade Plotter</h1>
+            </div>
             <button
               onClick={handleReset}
               className="text-sm text-gray-500 hover:text-gray-700"

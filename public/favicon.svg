@@ -1,0 +1,10 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Glasses -->
+  <circle cx="10" cy="18" r="6" stroke="#000" stroke-width="2" fill="none"/>
+  <circle cx="22" cy="18" r="6" stroke="#000" stroke-width="2" fill="none"/>
+  <line x1="16" y1="18" x2="16" y2="18" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+  <line x1="15" y1="18" x2="17" y2="18" stroke="#000" stroke-width="2"/>
+  
+  <!-- Trendline above glasses (centered) -->
+  <polyline points="6,8 10,5 13,7 17,4 21,6 24,3" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
